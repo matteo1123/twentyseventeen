@@ -40,11 +40,17 @@
 		}
 		?>
 	</header><!-- .entry-header -->
-		<p><?php echo the_excerpt(); ?></p>
 	<?php if ( '' !== get_the_post_thumbnail() && ! is_single() ) : ?>
 		<div class="post-thumbnail">
 			<a href="<?php the_permalink(); ?>">
 				<?php the_post_thumbnail( 'twentyseventeen-featured-image' ); ?>
+				<p><?php 
+					if(strlen(get_the_excerpt()) > 88) {
+						echo( substr(get_the_excerpt(), 0, 85) . '...');
+					} else {
+						echo(get_the_excerpt());
+					}
+				?></p>
 			</a>
 		</div><!-- .post-thumbnail -->
 	<?php endif; ?>

@@ -9,9 +9,6 @@
  * @since Twenty Seventeen 1.0
  * @version 1.0
  */
-if(!is_user_logged_in()) {
-    wp_redirect("/");
-} else {
 	$new_owned = get_posts(array(
 		'numberposts'	=> -1,
 		'post_type'		=> 'coursesowned',
@@ -107,5 +104,5 @@ if(!is_user_logged_in()) {
 
 	<?php
 	get_footer();
-}
+
 ?>

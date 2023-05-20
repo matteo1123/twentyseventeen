@@ -1,3 +1,4 @@
+
 <?php
 /**
  * The main template file
@@ -14,51 +15,63 @@
  * @since Twenty Seventeen 1.0
  * @version 1.0
  */
-get_header();
-?>
-<div class="wrap">
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main" role="main">
-			<?php 
-			$post_id = get_queried_object_id();
-			$content = get_the_content( null, false, $post_id );
-			echo $content;
-			$user_meta=get_userdata(get_current_user_id());
-			$user_roles=$user_meta->roles;
-			$args = array(
-			'numberposts'	=> -1,
-			'post_type'		=> 'post',
-			'meta_key'		=> 'premium',
-			'meta_value'	=> 'false'
-			);
-			$the_query = new WP_Query($args);
 
+get_header(); ?>
+<h1>index.php</h1>
+<h2><?php echo(get_permalink()); ?><h2>
+<div class="wrap">
+	<?php if ( is_home() && ! is_front_page() ) : ?>
+		<header class="page-header">
+			<h1 class="page-title"><?php single_post_title(); ?></h1>
+		</header>
+	<?php else : ?>
+	<header class="page-header">
+		<h2 class="page-title"><?php _e( 'Posts', 'twentyseventeen' ); ?></h2>
+	</header>
+	<?php endif; ?>
+
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main">
+
+			<?php
+			if ( have_posts() ) :
+
+				// Start the Loop.
+				while ( have_posts() ) :
+					the_post();
+
+					/*
+					 * Include the Post-Format-specific template for the content.
+					 * If you want to override this in a child theme, then include a file
+					 * called content-___.php (where ___ is the Post Format name) and that
+					 * will be used instead.
+					 */
+					get_template_part( 'template-parts/post/content', get_post_format() );
+
+				endwhile;
+
+				the_posts_pagination(
+					array(
+						/* translators: Hidden accessibility text. */
+						'prev_text'          => twentyseventeen_get_svg( array( 'icon' => 'arrow-left' ) ) . '<span class="screen-reader-text">' . __( 'Previous page', 'twentyseventeen' ) . '</span>',
+						/* translators: Hidden accessibility text. */
+						'next_text'          => '<span class="screen-reader-text">' . __( 'Next page', 'twentyseventeen' ) . '</span>' . twentyseventeen_get_svg( array( 'icon' => 'arrow-right' ) ),
+						/* translators: Hidden accessibility text. */
+						'before_page_number' => '<span class="meta-nav screen-reader-text">' . __( 'Page', 'twentyseventeen' ) . ' </span>',
+					)
+				);
+
+			else :
+
+				get_template_part( 'template-parts/post/content', 'none' );
+
+			endif;
 			?>
 
-				<?php if( $the_query->have_posts() ): ?>
-					<?php while ( $the_query->have_posts() ) {
-					$the_query->the_post();?>
-						<a href="<?php echo the_permalink(); ?>">
-							<div style="min-height:300px; display:flex; margin-bottom:20px;" class="btn btn-dark btn-block container-fluid row">
-								<div class="col-8">
-									<h2 class="text-left"><?php echo the_title(); ?></h2>
-								</div>
-								<div class="col-4">
-									<?php if(get_the_post_thumbnail_url()){ ?>
-										<img style="height:200px; width:300px;" src="<?php echo get_the_post_thumbnail_url()?>"/>
-									<?Php } else { ?>
-										<img style="height:200px; width:300px;" src="/wp-content/uploads/2021/07/music-images-9-scaled.jpg">
-									<?php }; ?>
-								</div>
-								<p class="course-excerpts"><?php echo get_the_excerpt() ?></p>
-							</div>
-						</a>
-				<?php }; ?>
-			<?php endif; ?>
 		</main><!-- #main -->
 	</div><!-- #primary -->
+	<?php get_sidebar(); ?>
 </div><!-- .wrap -->
+
 <?php
 get_footer();
-	
-?>

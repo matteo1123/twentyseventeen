@@ -715,9 +715,7 @@ function custom_dashboard_help() {
 	echo '<div class="row" style="width:80vw; display:flex; justify-content:space-around;">
   	<div class="col-md-2 col-12"><a title="Pages make up the back bone of the site"  href="/wp-admin/edit.php?post_type=page" class="btn col-12 btn-lg btn-dark">Pages</a></div>
 	<div class="col-md-2"><a href="/wp-admin/edit.php" title="Posts are open to the public free to everyone content that you can easily generate" class="btn col-12 btn-lg btn-dark">Posts</a></div>
-	<div class="col-md-2"><a href="/wp-admin/edit.php?post_type=courses" title="One course consists of many classes" class="btn col-12 btn-lg btn-dark">Courses</a></div>
-	<div class="col-md-2"><a href="/wp-admin/edit.php?post_type=classes" title="classes are often videos but can be other content as well" class="btn col-12 btn-lg btn-dark">Classes</a></div>
-  	<div class="col-md-2"><a href="/wp-admin/nav-menus.php" title="your payments portal" class="btn btn-lg px-0 col-12 btn-dark">Payments</a></div>
+	<div class="col-md-2"><a href="/wp-admin/edit.php?post_type=products" title="List your products to offer them for sale" class="btn col-12 btn-lg btn-dark">Products</a></div>
   </div>';
 
 
@@ -726,163 +724,25 @@ function custom_dashboard_help() {
 }
 function custom_post_type() {
 
-	// Set UI labels for Custom Post Type
-		$labels = array(
-			'name'                => _x( 'Courses', 'Post Type General Name', 'twentytwenty' ),
-			'singular_name'       => _x( 'Courses', 'Post Type Singular Name', 'twentytwenty' ),
-			'menu_name'           => __( 'Courses', 'twentytwenty' ),
-			'parent_item_colon'   => __( 'Parent Course', 'twentytwenty' ),
-			'all_items'           => __( 'All Courses', 'twentytwenty' ),
-			'view_item'           => __( 'View Course', 'twentytwenty' ),
-			'add_new_item'        => __( 'Add New Course', 'twentytwenty' ),
-			'add_new'             => __( 'Add New', 'twentytwenty' ),
-			'edit_item'           => __( 'Edit Course', 'twentytwenty' ),
-			'update_item'         => __( 'Update Course', 'twentytwenty' ),
-			'search_items'        => __( 'Search Course', 'twentytwenty' ),
-			'not_found'           => __( 'Not Found', 'twentytwenty' ),
-			'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwenty' ),
-		);
-
-	// Set other options for Custom Post Type
-
-		$args = array(
-			'label'               => __( 'courses', 'twentytwenty' ),
-			'description'         => __( 'A selection of lessons', 'twentytwenty' ),
-			'labels'              => $labels,
-			// Features this CPT supports in Post Editor
-			'supports'            => array( 'title', 'excerpt', 'author', 'thumbnail', 'comments', 'custom-fields', ),
-			// You can associate this CPT with a taxonomy or custom taxonomy.
-			'taxonomies'          => array( 'genres' ),
-			/* A hierarchical CPT is like Pages and can have
-			* Parent and child items. A non-hierarchical CPT
-			* is like Posts.
-			*/
-			'hierarchical'        => false,
-			'public'              => false,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => true,
-			'show_in_admin_bar'   => true,
-			'menu_position'       => 5,
-			'can_export'          => true,
-			'has_archive'         => true,
-			'exclude_from_search' => false,
-			'publicly_queryable'  => true,
-			'capability_type'     => 'course',
-			'map_meta_cap'  	  => true,
-			'show_in_rest' => false,
-
-		);
-
 		// Registering your Custom Post Type
-		register_post_type( 'courses', $args );
-
-			// Set UI labels for Custom Post Type
-			$classlabels = array(
-				'name'                => _x( 'Classes', 'Post Type General Name', 'twentytwenty' ),
-				'singular_name'       => _x( 'Classes', 'Post Type Singular Name', 'twentytwenty' ),
-				'menu_name'           => __( 'Classes', 'twentytwenty' ),
-				'parent_item_colon'   => __( 'Parent Class', 'twentytwenty' ),
-				'all_items'           => __( 'All Classes', 'twentytwenty' ),
-				'view_item'           => __( 'View Class', 'twentytwenty' ),
-				'add_new_item'        => __( 'Add New Class', 'twentytwenty' ),
-				'add_new'             => __( 'Add New', 'twentytwenty' ),
-				'edit_item'           => __( 'Edit Class', 'twentytwenty' ),
-				'update_item'         => __( 'Update Class', 'twentytwenty' ),
-				'search_items'        => __( 'Search Class', 'twentytwenty' ),
-				'not_found'           => __( 'Not Found', 'twentytwenty' ),
-				'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwenty' ),
-			);
-
-		// Set other options for Custom Post Type
-
-			$classargs = array(
-				'label'               => __( 'Classes', 'twentytwenty' ),
-				'description'         => __( 'A selection of lessons', 'twentytwenty' ),
-				'labels'              => $classlabels,
-				// Features this CPT supports in Post Editor
-				'supports'            => array( 'title', 'editor', 'author', 'comments', 'custom-fields', ),
-				// You can associate this CPT with a taxonomy or custom taxonomy.
-				'taxonomies'          => array( 'genres' ),
-				/* A hierarchical CPT is like Pages and can have
-				* Parent and child items. A non-hierarchical CPT
-				* is like Posts.
-				*/
-				'hierarchical'        => false,
-				'public'              => false,
-				'show_ui'             => true,
-				'show_in_menu'        => true,
-				'show_in_nav_menus'   => true,
-				'show_in_admin_bar'   => true,
-				'menu_position'       => 5,
-				'can_export'          => true,
-				'has_archive'         => true,
-				'exclude_from_search' => false,
-				'publicly_queryable'  => true,
-				'capability_type'     => 'class',
-				'map_meta_cap'  	  => true,
-				'show_in_rest' 		  => true,
-
-			);
-
-		$watcheslabels = array(
-			'name'                => _x( 'Watches', 'Post Type General Name', 'twentytwenty' ),
-			'singular_name'       => _x( 'Watches', 'Post Type Singular Name', 'twentytwenty' ),
-			'all_items'           => __( 'All Watches', 'twentytwenty' ),
-			'add_new_item'        => __( 'Add New watch', 'twentytwenty' ),
-			'edit_item'           => __( 'Edit Watch', 'twentytwenty' ),
-			'update_item'         => __( 'Update Watch', 'twentytwenty' ),
-			'search_items'        => __( 'Search Watch', 'twentytwenty' ),
+		$productslabels = array(
+			'name'                => _x( 'Products', 'Post Type General Name', 'twentytwenty' ),
+			'singular_name'       => _x( 'products', 'Post Type Singular Name', 'twentytwenty' ),
+			'all_items'           => __( 'All Products', 'twentytwenty' ),
+			'add_new_item'        => __( 'Add New Product', 'twentytwenty' ),
+			'edit_item'           => __( 'Edit Product', 'twentytwenty' ),
+			'update_item'         => __( 'Update Product', 'twentytwenty' ),
+			'search_items'        => __( 'Search Products', 'twentytwenty' ),
 			'not_found'           => __( 'Not Found', 'twentytwenty' ),
 			'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwenty' ),
 		);
 
 	// Set other options for Custom Post Type
 
-		$watchesargs = array(
+		$productsargs = array(
 			'label'               => __( 'watches', 'twentytwenty' ),
 			'description'         => __( 'tracking of which videos students have already watched', 'twentytwenty' ),
-			'labels'              => $watcheslabels,
-			// Features this CPT supports in Post Editor
-			'supports'            => array( 'title' ),
-			// You can associate this CPT with a taxonomy or custom taxonomy.
-			'taxonomies'          => array( 'genres' ),
-			/* A hierarchical CPT is like Pages and can have
-			* Parent and child items. A non-hierarchical CPT
-			* is like Posts.
-			*/
-			'hierarchical'        => false,
-			'public'              => false,
-			'show_ui'             => true,
-			'show_in_menu'        => true,
-			'show_in_nav_menus'   => true,
-			'show_in_admin_bar'   => true,
-			'menu_position'       => 5,
-			'can_export'          => true,
-			'has_archive'         => true,
-			'exclude_from_search' => false,
-			'publicly_queryable'  => true,
-			'show_in_rest' 		  => false,
-
-		);
-		$courseslabels = array(
-			'name'                => _x( 'Course Ownership', 'Post Type General Name', 'twentytwenty' ),
-			'singular_name'       => _x( 'Course Ownership', 'Post Type Singular Name', 'twentytwenty' ),
-			'all_items'           => __( 'All Courses Owned', 'twentytwenty' ),
-			'add_new_item'        => __( 'Add New Course Ownership', 'twentytwenty' ),
-			'edit_item'           => __( 'Edit Course Ownership', 'twentytwenty' ),
-			'update_item'         => __( 'Update Course Ownership', 'twentytwenty' ),
-			'search_items'        => __( 'Search Course Ownership', 'twentytwenty' ),
-			'not_found'           => __( 'Not Found', 'twentytwenty' ),
-			'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwenty' ),
-		);
-
-	// Set other options for Custom Post Type
-
-		$coursesargs = array(
-			'label'               => __( 'watches', 'twentytwenty' ),
-			'description'         => __( 'tracking of which videos students have already watched', 'twentytwenty' ),
-			'labels'              => $courseslabels,
+			'labels'              => $productslabels,
 			// Features this CPT supports in Post Editor
 			'supports'            => array( 'title' ),
 			// You can associate this CPT with a taxonomy or custom taxonomy.
@@ -907,10 +767,8 @@ function custom_post_type() {
 		);
 
 		// Registering your Custom Post Type
-			register_post_type( 'watches', $watchesargs );
-			register_post_type( 'coursesowned', $coursesargs );
-			register_post_type( 'courses', $args );
-			register_post_type( 'classes', $classargs );
+			register_post_type( 'products', $productsargs );
+
 
 	}
 
@@ -921,14 +779,14 @@ function custom_post_type() {
 
 	add_action( 'init', 'custom_post_type', 0 );
 
-// Register a courses ACF Block
+// Register a products ACF Block
 if( function_exists('acf_register_block') ) {
 
 	$result = acf_register_block(array(
-		'name'				=> 'courses',
-		'title'				=> __('courses'),
-		'description'		=> __('A custom courses block.'),
-		'render_callback'	=> 'courses_block_html'
+		'name'				=> 'products',
+		'title'				=> __('products'),
+		'description'		=> __('A custom products block.'),
+		'render_callback'	=> 'products_block_html'
 		//'category'		=> '',
 		//'icon'			=> '',
 		//'keywords'		=> array(),
@@ -1017,7 +875,11 @@ function paymentRoute() {
 		'callback' => 'payment'
 	));
 }
-
+add_action('wp_dashboard_setup', 'remove_site_health_dashboard_widget');
+function remove_site_health_dashboard_widget()
+{
+    remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+}
 function payment($data) {
 
 	$amount = $data['unit_amount'];
@@ -1026,7 +888,7 @@ function payment($data) {
 	$success = $data['success_url'];
 	$cancel = $data['cancel_url'];
 	$user_id = $data['user_id'];
-	$course_id = $data['course_id'];
+	$product_id = $data['product_id'];
 
 	$YOUR_DOMAIN = get_site_url();
 
@@ -1047,7 +909,7 @@ function payment($data) {
 		]],
 		'metadata'=> array(
 			'user_id' => $user_id,
-			'course_id' => $course_id
+			'product_id' => $product_id
 		),
 		'mode' => 'payment',
 		'success_url' => $success,

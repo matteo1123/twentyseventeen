@@ -15,10 +15,10 @@
 		the_privacy_policy_link( '', '<span role="separator" aria-hidden="true"></span>' );
 	}
 	?>
-	<a href="<?php echo esc_url( __( 'https://wordpress.org/', 'twentyseventeen' ) ); ?>" class="imprint">
+	<a href="<?php echo get_site_url(); ?>" class="imprint">
 		<?php
 			/* translators: %s: WordPress */
-		printf( __( 'Proudly powered by %s', 'twentyseventeen' ), 'WordPress' );
+		printf( __( 'Thank you for visiting LoveButter Organics', 'twentyseventeen' ) );
 		?>
 	</a>
 </div><!-- .site-info -->

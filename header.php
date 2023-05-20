@@ -11,7 +11,8 @@
  * @since Twenty Seventeen 1.0
  * @version 1.0
  */
-$page_id = $wp_query->queried_object->post_name;
+$page_id = $wp_query->queried_object;
+//print_r($page_id);
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js no-svg">
 <head>
@@ -37,13 +38,6 @@ $page_id = $wp_query->queried_object->post_name;
 				<div class="wrap">
 					<?php get_template_part( 'template-parts/navigation/navigation', 'top' ); ?>
 				</div><!-- .wrap -->
-				<?php if(is_user_logged_in()) { ?>
-					<a href=<?php echo wp_logout_url(); ?> class="login btn btn-outline-secondary">Logout</a>
-				<?php } else { ?>
-					<a href=<?php echo wp_registration_url(); ?> class="signup btn btn-small btn-secondary">Sign Up</a>
-					<a href=<?php echo wp_login_url(); ?> class="login btn btn-outline-secondary">Login</a>
-				<?php } ?>
-
 			</div><!-- .navigation-top -->
 		<?php endif; ?>
 
