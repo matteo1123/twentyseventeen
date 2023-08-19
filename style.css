@@ -52,6 +52,9 @@ Use it to make something cool, have fun, and share what you've learned with othe
 1.0 Normalize
 Styles based on Normalize v5.0.0 @link https://github.com/necolas/normalize.css
 --------------------------------------------------------------*/
+a.no-underline:hover{ 
+	text-decoration: none 
+}
 
 html {
 	font-family: sans-serif;
@@ -116,14 +119,10 @@ abbr[title] {
 	text-decoration: none;
 }
 
-b,
-strong {
-	font-weight: inherit;
-}
 
 b,
 strong {
-	font-weight: 700;
+	font-weight: 800;
 }
 
 code,

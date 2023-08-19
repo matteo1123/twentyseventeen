@@ -1,12 +1,12 @@
 <?php
 /**
- * Twenty Seventeen functions and definitions
+ * LoveButter functions and definitions
  *
  * @link https://developer.wordpress.org/themes/basics/theme-functions/
  *
  * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since Twenty Seventeen 1.0
+ * @subpackage Love_Butter
+ * @since Twenty Twenty three 1.0
  */
 
 /**
@@ -744,7 +744,7 @@ function custom_post_type() {
 			'description'         => __( 'tracking of which videos students have already watched', 'twentytwenty' ),
 			'labels'              => $productslabels,
 			// Features this CPT supports in Post Editor
-			'supports'            => array( 'title' ),
+			'supports'            => array( 'title', 'thumbnail' ),
 			// You can associate this CPT with a taxonomy or custom taxonomy.
 			'taxonomies'          => array( 'genres' ),
 			/* A hierarchical CPT is like Pages and can have
@@ -881,7 +881,7 @@ function remove_site_health_dashboard_widget()
     remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
 }
 function payment($data) {
-
+	error_log('payment route hit');
 	$amount = $data['unit_amount'];
 	$image = $data['image'];
 	$title = $data['title'];
@@ -889,10 +889,10 @@ function payment($data) {
 	$cancel = $data['cancel_url'];
 	$user_id = $data['user_id'];
 	$product_id = $data['product_id'];
-
+	error_log($amount);
 	$YOUR_DOMAIN = get_site_url();
 
-	\Stripe\Stripe::setApiKey(get_field('private_key', 301));
+	\Stripe\Stripe::setApiKey(get_field('private_key', 90));
 	try{
 	$checkout_session = \Stripe\Checkout\Session::create([
 		'payment_method_types' => ['card'],
@@ -935,9 +935,8 @@ function purchasedRoutes() {
 }
 // capture stripe webhooks for both subscriptions and course purchases
 function purchased($data) {
-
-	\Stripe\Stripe::setApiKey(get_field('private_key', 301));
-	$endpoint_secret = get_field('endpoint_secret', 301);
+	\Stripe\Stripe::setApiKey(get_field('private_key', 90));
+	$endpoint_secret = get_field('endpoint_secret', 90);
 	$payload = @file_get_contents('php://input');
 	$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 	$event = null;
@@ -1032,110 +1031,3 @@ function award_ownership($data) {
 	}
 }
 
-function subscriptionConfirmed($customer_id, $subscription_id, $status) {
-	$stripe = new \Stripe\StripeClient(get_field('private_key', 301));
-	  $customer = $stripe->customers->retrieve(
-		$customer_id,
-		[]
-	  );
-	  $user_id = $customer->metadata->user_id;
-	$user = wp_update_user( array( 'ID' => $user_id, 'role' => 'student_subscriber' ));
-	update_field('subscription', $subscription_id, "user_$user_id");
-	update_field('customer', $customer_id, "user_$user_id");
-}
-
-add_action('rest_api_init', 'subscriptionRoute');
-function subscriptionRoute() {
-	register_rest_route('api/v1', 'subscription/', array(
-		'methods' => 'POST',
-		'callback' => 'subscription'
-	));
-	register_rest_route('api/v1', 'subscription/', array(
-		'methods' => 'DELETE',
-		'callback' => 'blockAccess'
-	));
-	register_rest_route('api/v1', 'subscribed/', array(
-		'methods' => 'GET',
-		'callback' => 'subscribed'
-	));
-
-	register_rest_route('api/v1', 'cancelSubscription/', array(
-		'methods' => 'POST',
-		'callback' => 'cancelSubscription'
-	));
-}
-// interact with stripe creating a customer, then a session based on that customer
-function subscription($data) {
-	$amount = $data['unit_amount'];
-	$image = $data['image'];
-	$title = $data['title'];
-	$success = $data['success_url'];
-	$cancel = $data['cancel_url'];
-	$user_id = $data['user_id'];
-	$priceId = get_field('price_id', 301);
-	$YOUR_DOMAIN = get_site_url();
-	$user_info = WP_User::get_data_by( 'ID', $user_id );
-	try{
-		$stripe = new \Stripe\StripeClient( get_field('private_key', 301) );
-		$customer = $stripe->customers->create([
-		'email' => $user_info->data->user_email,
-		'description' => 'My First Test Customer (created for API docs)',
-		"metadata" => ["user_id" => $user_id],
-		]);
-
-	\Stripe\Stripe::setApiKey(get_field('private_key', 301));
-	$checkout_session = \Stripe\Checkout\Session::create([
-		'client_reference_id' => $customer->id,
-		'customer' => $customer->id,
-		'success_url' => $success,
-		'cancel_url' => $cancel,
-		'payment_method_types' => ['card'],
-		'mode' => 'subscription',
-		'line_items' => [[
-		  'price' => $priceId,
-		  'quantity' => 1,
-		]],
-	  ]);
-	
-	} catch (Exception $e) {
-		error_log($e->getMessage());
-	}
-	//   header("HTTP/1.1 303 See Other");
-	//   header("Location: " . $checkout_session->url);
-	  return $checkout_session;
-}
-
-function subscribed($data) {
-	$user_id = $_GET['user_id'];
-}
-
-function cancelSubscription($data) {
-	try{
-		$user_id = $data['user_id'];
-		\Stripe\Stripe::setApiKey(get_field('private_key', 301));
-
-		\Stripe\Subscription::update(
-		get_field('subscription', "user_$user_id"),
-		[
-			'cancel_at_period_end' => true,
-		]
-		);
-		$stripe = new \Stripe\StripeClient(get_field('private_key', 301));
-		$sub = $stripe->subscriptions->cancel(
-			get_field('subscription', "user_$user_id"),
-			[]
-		);
-		
-	} catch (Exception $e) {
-		error_log($e->getMessage()); 
-	}
-	return $sub;
-}
-function blockAccess($data) {
-	error_log('block access');
-	$user_id = $data['user_id'];
-	$user = wp_update_user( array( 'ID' => $user_id, 'role' => 'student' ));
-	update_field('end_date', '', "user_$user_id");
-	update_field('subscription', '', "user_$user_id");
-	return true;
-} 
