@@ -21,7 +21,9 @@ get_header(); ?>
 			// Start the Loop.
 			while ( have_posts() ) :
 				the_post();
-
+				echo '<div class="col-12">';
+				echo get_the_post_thumbnail( get_queried_object_id(), 'twentyseventeen-featured-image' );
+				echo '</div><!-- .single-featured-image-header -->';
 				echo the_content();
 				// If comments are open or we have at least one comment, load up the comment template.
 				if ( comments_open() || get_comments_number() ) :
