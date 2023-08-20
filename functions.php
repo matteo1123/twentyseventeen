@@ -935,8 +935,8 @@ function purchasedRoutes() {
 }
 // capture stripe webhooks for both subscriptions and course purchases
 function purchased($data) {
-	\Stripe\Stripe::setApiKey(get_field('private_key', 90));
-	$endpoint_secret = get_field('endpoint_secret', 90);
+	\Stripe\Stripe::setApiKey(get_field('private_key', 18));
+	$endpoint_secret = get_field('endpoint_secret', 18);
 	$payload = @file_get_contents('php://input');
 	$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 	$event = null;
@@ -985,7 +985,7 @@ function purchased($data) {
 	http_response_code(200);
 }
 function finalCancel($customer_id, $end_date) {
-	$stripe = new \Stripe\StripeClient(get_field('private_key', 301));
+	$stripe = new \Stripe\StripeClient(get_field('private_key', 18));
 	$customer = $stripe->customers->retrieve(
 	  $customer_id,
 	  []
