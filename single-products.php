@@ -41,8 +41,11 @@
 		<div class="col-8"><?php echo the_field('extra_content_', get_the_ID());?></div>
 		<div class="col-2"></div>
 	</div>
-<h1>single-products.php</h1>
-<h2><?php echo(get_permalink()); ?></h2>
+<?php if(debug()) { ?>
+	<h1>single-products.php</h1>
+	<h2><?php echo(get_permalink()); ?></h2>
+<?php } ?>
+
 	<?php
 	get_footer();
 

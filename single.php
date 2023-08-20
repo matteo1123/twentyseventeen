@@ -11,7 +11,9 @@
  */
 
 get_header(); ?>
-<h1>single</h1>
+<?php if(debug()) { ?>
+	<h1>single</h1>
+<?php } ?>
 <div class="wrap">
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
