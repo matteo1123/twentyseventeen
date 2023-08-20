@@ -20,9 +20,11 @@ get_header(); ?>
 <div class="wrap">
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">
+<?php if(debug()) { ?>
 <h1>page.php</h1>
 <h2><?php echo(get_permalink()); ?><h2>
-			<?php
+<?php } ?>
+<?php
 			while ( have_posts() ) :
 				the_post();
 

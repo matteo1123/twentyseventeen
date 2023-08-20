@@ -17,8 +17,10 @@
  */
 
 get_header(); ?>
-<h1>index.php</h1>
-<h2><?php echo(get_permalink()); ?><h2>
+<?php if(debug()) { ?>
+	<h1>index.php</h1>
+	<h2><?php echo(get_permalink()); ?><h2>
+<?php } ?>
 <div class="wrap">
 	<?php if ( is_home() && ! is_front_page() ) : ?>
 		<header class="page-header">

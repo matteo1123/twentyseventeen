@@ -1031,3 +1031,6 @@ function award_ownership($data) {
 	}
 }
 
+function debug() {
+	return false;
+}
