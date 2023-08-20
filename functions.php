@@ -892,7 +892,7 @@ function payment($data) {
 	error_log($amount);
 	$YOUR_DOMAIN = get_site_url();
 
-	\Stripe\Stripe::setApiKey(get_field('private_key', 90));
+	\Stripe\Stripe::setApiKey(get_field('private_key', 18));
 	try{
 	$checkout_session = \Stripe\Checkout\Session::create([
 		'payment_method_types' => ['card'],
