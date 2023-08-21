@@ -4424,3 +4424,12 @@ p > object:only-child {
 	0% {opacity:0;}
 	100% {opacity:1;}
 }
+
+@media (max-width: 1200px) {
+	.product-description {
+		display: flex;
+		align-items: center;
+		justify-content:center;
+		flex-direction: column;
+	}
+}
