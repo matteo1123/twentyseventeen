@@ -765,10 +765,47 @@ function custom_post_type() {
 			'show_in_rest' 		  => false,
 
 		);
+		$paymentlabels = array(
+			'name'                => _x( 'Payments', 'Post Type General Name', 'twentytwenty' ),
+			'singular_name'       => _x( 'Payment', 'Post Type Singular Name', 'twentytwenty' ),
+			'all_items'           => __( 'All Payments', 'twentytwenty' ),
+			'add_new_item'        => __( 'Add New Payment', 'twentytwenty' ),
+			'edit_item'           => __( 'Edit Payment', 'twentytwenty' ),
+			'update_item'         => __( 'Update Payments', 'twentytwenty' ),
+			'search_items'        => __( 'Search Payments', 'twentytwenty' ),
+			'not_found'           => __( 'Not Found', 'twentytwenty' ),
+			'not_found_in_trash'  => __( 'Not found in Trash', 'twentytwenty' ),
+		);
+		$paymentargs = array(
+			'label'               => __( 'watches', 'twentytwenty' ),
+			'description'         => __( 'tracking of which videos students have already watched', 'twentytwenty' ),
+			'labels'              => $paymentlabels,
+			// Features this CPT supports in Post Editor
+			'supports'            => array( 'title', 'excerpt', 'editor', 'custom-fields' ),
+			// You can associate this CPT with a taxonomy or custom taxonomy.
+			'taxonomies'          => array( 'genres' ),
+			/* A hierarchical CPT is like Pages and can have
+			* Parent and child items. A non-hierarchical CPT
+			* is like Posts.
+			*/
+			'hierarchical'        => false,
+			'public'              => false,
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_nav_menus'   => true,
+			'show_in_admin_bar'   => true,
+			'menu_position'       => 6,
+			'can_export'          => true,
+			'has_archive'         => true,
+			'exclude_from_search' => false,
+			'publicly_queryable'  => true,
+			'show_in_rest' 		  => false,
+
+		);
 
 		// Registering your Custom Post Type
-			register_post_type( 'products', $productsargs );
-
+		register_post_type( 'products', $productsargs );
+		register_post_type( 'payments', $paymentargs );
 
 	}
 
@@ -793,36 +830,6 @@ if( function_exists('acf_register_block') ) {
 	));
 }
 wp_enqueue_script( 'customjs', get_theme_file_uri( '/assets/js/custom.js' ));
-add_action('rest_api_init', 'watchedRoutes');
-function watchedRoutes() {
-	register_rest_route('api/v1', 'manageWatches/', array(
-		'methods' => 'POST',
-		'callback' => 'createWatch'
-	));
-	register_rest_route('api/v1', 'manageWatches/', array(
-		'methods' => 'DELETE',
-		'callback' => 'deleteWatch'
-	));
-}
-
-function createWatch($data) {
-	$class_id = $data['class_id'];
-	$user_id = $data['user_id'];
-	return wp_insert_post(array(
-		'post_type' => 'watches',
-		'post_status' => 'publish',
-		'post_title' => 'video watched',
-		'meta_input' => array(
-			'class_id' => $class_id,
-			'user_id' => $user_id,
-			)
-		));
-}
-function deleteWatch($data) {
-	$post_id = $data['delete_post']['id'];
-	wp_delete_post($post_id);
-	return $data['delete_post'];
-}
 
 // redirect non admin users out of admin and onto homepage
 add_action('admin_init', 'redirectStudentsToFrontend');
@@ -856,7 +863,11 @@ add_action('login_enqueue_scripts', 'loginCSS');
 function loginCss() {
 	wp_enqueue_style( 'logincss', get_theme_file_uri( '/assets/css/login.css' ));
 }
-
+add_action('wp_dashboard_setup', 'remove_site_health_dashboard_widget');
+function remove_site_health_dashboard_widget()
+{
+    remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
+}
 function my_wp_nav_menu_args( $args = '' ) {
 
 	if( is_user_logged_in() ) {
@@ -865,8 +876,8 @@ function my_wp_nav_menu_args( $args = '' ) {
 		$args['menu'] = 'logged-out';
 	}
 		return $args;
-	}
-	add_filter( 'wp_nav_menu_args', 'my_wp_nav_menu_args' );
+}
+add_filter( 'wp_nav_menu_args', 'my_wp_nav_menu_args' );
 
 add_action('rest_api_init', 'paymentRoute');
 function paymentRoute() {
@@ -874,11 +885,6 @@ function paymentRoute() {
 		'methods' => 'POST',
 		'callback' => 'payment'
 	));
-}
-add_action('wp_dashboard_setup', 'remove_site_health_dashboard_widget');
-function remove_site_health_dashboard_widget()
-{
-    remove_meta_box('dashboard_site_health', 'dashboard', 'normal');
 }
 function payment($data) {
 	error_log('payment route hit');
@@ -892,7 +898,7 @@ function payment($data) {
 	error_log($amount);
 	$YOUR_DOMAIN = get_site_url();
 
-	\Stripe\Stripe::setApiKey(get_field('private_key', 18));
+	\Stripe\Stripe::setApiKey(get_field('private_key', paymentPost()));
 	try{
 	$checkout_session = \Stripe\Checkout\Session::create([
 		'payment_method_types' => ['card'],
@@ -912,6 +918,7 @@ function payment($data) {
 			'product_id' => $product_id
 		),
 		'mode' => 'payment',
+		'billing_address_collection' => 'required',
 		'success_url' => $success,
 		'cancel_url' => $cancel,
 	  ]);
@@ -935,8 +942,14 @@ function purchasedRoutes() {
 }
 // capture stripe webhooks for both subscriptions and course purchases
 function purchased($data) {
-	\Stripe\Stripe::setApiKey(get_field('private_key', 18));
-	$endpoint_secret = get_field('endpoint_secret', 18);
+	error_log('purchase route hit');
+	error_log(var_dump($data));
+	error_log(gettype($data));
+	error_log('print_r');
+	error_log(print_r($data));
+	
+	\Stripe\Stripe::setApiKey(get_field('private_key', paymentPost()));
+	$endpoint_secret = get_field('endpoint_secret', paymentPost());
 	$payload = @file_get_contents('php://input');
 	$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 	$event = null;
@@ -985,7 +998,7 @@ function purchased($data) {
 	http_response_code(200);
 }
 function finalCancel($customer_id, $end_date) {
-	$stripe = new \Stripe\StripeClient(get_field('private_key', 18));
+	$stripe = new \Stripe\StripeClient(get_field('private_key',paymentPost()));
 	$customer = $stripe->customers->retrieve(
 	  $customer_id,
 	  []
@@ -994,6 +1007,9 @@ function finalCancel($customer_id, $end_date) {
 	update_field('end_date', $end_date, "user_$user_id");
 }
 function award_ownership($data) {
+	error_log('award ownership');
+	error_log($data);
+	/*
 	$user_id = $data->user_id;
 	$course_id = $data->course_id;
 	$user_info = WP_User::get_data_by( 'ID', $user_id );
@@ -1029,8 +1045,14 @@ function award_ownership($data) {
 			update_field('user_id', $user_id, $new_post);
 		}
 	}
+	*/
 }
 
 function debug() {
 	return false;
+}
+
+function paymentPost() {
+	// local: 90 production: 18
+	return 18;
 }

@@ -24,15 +24,16 @@
 	<div class="row">
 		<div class="col-2"></div>
 		<?php
-			echo '<div class="col-xl-4">';
+			echo '<div class="col-xl-4 mobile-align">';
 			echo get_the_post_thumbnail( get_queried_object_id(), 'twentyseventeen-featured-image' );
 			echo '</div><!-- .single-featured-image-header -->';
 		?>
-		<div class="col-xl-4" style="margin:auto;">
+		<div class="col-xl-4 mobile-padding" style="margin:auto;">
 			<h2 class="text-left font-weight-bold"><?php echo the_title(); ?></h2>
 			<h2 class="text-left pt-0 font-weight-bold"><?php echo the_field('price', get_the_ID());?></h2>
 			<?php echo the_field('product_description', get_the_ID());?>
 			<button type="button" class="buy-now-button btn btn-outline-dark">Buy Now</button>
+			<button type="button" class="purchase btn btn-outline-dark">purchase</button>
 		</div>
 		<div class="col-2"></div>
 	</div>

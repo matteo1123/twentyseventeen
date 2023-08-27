@@ -4432,4 +4432,14 @@ p > object:only-child {
 		justify-content:center;
 		flex-direction: column;
 	}
+
+	.mobile-padding {
+		padding-left:5.5rem !important;
+		padding-right:1.5rem !important;
+		padding-top: 2.5rem !important;
+	}
+
+	.mobile-align {
+		padding-right:0px;
+	}
 }
