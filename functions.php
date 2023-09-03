@@ -942,12 +942,7 @@ function purchasedRoutes() {
 }
 // capture stripe webhooks for both subscriptions and course purchases
 function purchased($data) {
-	error_log('purchase route hit');
-	error_log(var_dump($data));
-	error_log(gettype($data));
-	error_log('print_r');
-	error_log(print_r($data));
-	
+
 	\Stripe\Stripe::setApiKey(get_field('private_key', paymentPost()));
 	$endpoint_secret = get_field('endpoint_secret', paymentPost());
 	$payload = @file_get_contents('php://input');
@@ -973,25 +968,13 @@ function purchased($data) {
 		case 'checkout.session.completed':
 			$paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
 			if($paymentIntent->mode != "subscription") {
-				award_ownership($paymentIntent->metadata);
+				error_log(var_export($data));
+				error_log(var_export($paymentIntent));
+				award_ownership($data);
 				error_log("checkout.session.completed".$paymentIntent->metadata);
 			}
 			break;
-			case 'invoice.paid':
-				error_log('invoice.paid');
-				$paymentIntent = $event->data->object;
-				if($paymentIntent->status == "paid") {
-					subscriptionConfirmed($paymentIntent->customer, $paymentIntent->subscription, true);
-				} else {
-					error_log('alternative status (other than paid): '.$paymentIntent->id);
-				}
-				break;
-			case 'customer.subscription.deleted':
-				error_log('customer.subscription.deleted');
-				$paymentIntent = $event->data->object;
-				finalCancel($paymentIntent->customer, $paymentIntent->current_period_end);
-				break;
-		default:
+			default:
 			$paymentIntent = $event->data->object;
 			error_log('Received unknown event type ' . $event->type);
 	}
@@ -1007,8 +990,9 @@ function finalCancel($customer_id, $end_date) {
 	update_field('end_date', $end_date, "user_$user_id");
 }
 function award_ownership($data) {
-	error_log('award ownership');
-	error_log($data);
+	$event = json_decode($data->get_body());
+	error_log(var_export($event->data->object->customer_details, true));
+
 	/*
 	$user_id = $data->user_id;
 	$course_id = $data->course_id;
