@@ -781,7 +781,7 @@ function custom_post_type() {
 			'description'         => __( 'tracking of which videos students have already watched', 'twentytwenty' ),
 			'labels'              => $paymentlabels,
 			// Features this CPT supports in Post Editor
-			'supports'            => array( 'title', 'excerpt', 'editor', 'custom-fields' ),
+			'supports'            => array( 'title', 'excerpt'),
 			// You can associate this CPT with a taxonomy or custom taxonomy.
 			'taxonomies'          => array( 'genres' ),
 			/* A hierarchical CPT is like Pages and can have
@@ -941,8 +941,8 @@ function purchasedRoutes() {
 	));
 }
 // capture stripe webhooks for both subscriptions and course purchases
-function purchased($data) {
 
+function purchased($data) {
 	\Stripe\Stripe::setApiKey(get_field('private_key', paymentPost()));
 	$endpoint_secret = get_field('endpoint_secret', paymentPost());
 	$payload = @file_get_contents('php://input');
@@ -989,47 +989,22 @@ function finalCancel($customer_id, $end_date) {
 	$user_id = $customer->metadata->user_id;
 	update_field('end_date', $end_date, "user_$user_id");
 }
+
 function award_ownership($data) {
 	$event = json_decode($data->get_body());
-	error_log(var_export($event->data->object->customer_details, true));
-
-	/*
-	$user_id = $data->user_id;
-	$course_id = $data->course_id;
-	$user_info = WP_User::get_data_by( 'ID', $user_id );
-	global $wpdb;
-	$results = $wpdb->get_results('SELECT * FROM wp_posts INNER JOIN wp_postmeta ON wp_posts.ID = wp_postmeta.post_id WHERE wp_posts.post_type = "coursesowned" AND wp_posts.post_status = "publish"  ');
-	$post_id;
-	foreach($results as $result) {
-		if($result->meta_key == "user_id") {
-			if($result->meta_value == $user_id) {
-				$post_id = $result->post_id;
-			}
-		}
-	}
-	if($post_id) {
-		$courses = get_field('course_id', $post_id);
-		if(is_array($courses)) {
-			array_push($courses, $course_id);
-		} else {
-			$courses = array([0] => $course_id);
-		}
-		update_field('course_id', $courses, $post_id);
-	} else {
-		$new_post = array(
-			'post_author' => 0,
-			'post_title' => $user_info->user_login,
-			'post_status' => 'publish',
-			'post_type' => 'coursesowned'
-		);
-		$new_post = wp_insert_post($new_post);
-		if($new_post != 0) {
-			$arr = array($course_id);
-			update_field('course_id', $arr, $new_post);
-			update_field('user_id', $user_id, $new_post);
-		}
-	}
-	*/
+	// error_log(var_export($event->data->object->customer_details, true));
+	$cd = $event->data->object->customer_details;
+	$cda = $event->data->object->customer_details->address;
+	$purchaseInfo = "{$cd->name} \n {$cda->line1} {$cda->line2} \n {$cda->city} {$cda->state}, {$cda->postal_code}";
+	$purchaseInfo = $purchaseInfo . "\n email: {$cd->email} \n phone:{$cd->phone}";
+	$new_post = array(
+		'post_author' => 0,
+		'post_title' => "{$cd->name} {$event->data->object->amount_subtotal}",
+		'post_status' => 'publish',
+		'post_type' => 'payments',
+		'post_excerpt' => $purchaseInfo 
+	);
+	$new_post = wp_insert_post($new_post);
 }
 
 function debug() {
@@ -1037,6 +1012,6 @@ function debug() {
 }
 
 function paymentPost() {
-	// local: 90 production: 18
-	return 18;
+
+	return 90;
 }

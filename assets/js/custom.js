@@ -9,11 +9,13 @@ window.onload = ()=>{
         }
 
         function payment(evt) {
+            window.location = success_url;
+            return;
             $.ajax({
                 url:  '/wp-json/api/v1/payment',
                 type: 'POST',
                 data: {
-                    'success_url' : cancel_url,
+                    'success_url' : success_url,
                     'cancel_url' : cancel_url,
                     'image': image,
                     'unit_amount': unit_amount * 100,
@@ -30,29 +32,5 @@ window.onload = ()=>{
         $('.buy-now-button').click(() => {
             payment();
         });
-
-        function purchase(evt) {
-            $.ajax({
-                url:  '/wp-json/api/v1/purchased',
-                type: 'POST',
-                data: {
-                    'success_url' : cancel_url,
-                    'cancel_url' : cancel_url,
-                    'image': image,
-                    'unit_amount': unit_amount * 100,
-                    'title' : title,                                                   
-                },
-                success: (res) => {
-                    window.location = res.url;
-                },
-                error: (err) => {
-                    console.log("err", err)
-                }
-            });
-        }
-        $('.purchase').click(() => {
-            purchase();
-        });
-
     })( jQuery );
 };
