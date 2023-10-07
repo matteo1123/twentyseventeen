@@ -9,8 +9,6 @@ window.onload = ()=>{
         }
 
         function payment(evt) {
-            window.location = success_url;
-            return;
             $.ajax({
                 url:  '/wp-json/api/v1/payment',
                 type: 'POST',

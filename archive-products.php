@@ -17,7 +17,7 @@
 	<h2><?php echo(get_permalink()); ?></h2>
 <?php } ?>
 	<div class='container'>
-		<div style="width:100vw; margin:10px;" class=" row">
+		<div style="margin:10px;" class=" row">
 			<div class="col-xl-10">
 			<?php
 			if ( have_posts() ) {?>
@@ -32,7 +32,7 @@
 									</div>
 									<div class="col-xl-4">
 										<?php if(get_the_post_thumbnail_url()){ ?>
-											<img style="height:100%;"" src="<?php echo get_the_post_thumbnail_url()?>"/>
+											<img style="width: 100%; height:auto;" src="<?php echo get_the_post_thumbnail_url()?>"/>
 										<?Php } else { ?>
 											<img style="height:100%;"src="/wp-content/uploads/2023/05/lovebutter1.jpg">
 										<?php }; ?>

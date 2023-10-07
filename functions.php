@@ -331,6 +331,7 @@ function twentyseventeen_resource_hints( $urls, $relation_type ) {
 
 	return $urls;
 }
+add_filter( 'auto_update_theme', '__return_false' );
 add_filter( 'wp_resource_hints', 'twentyseventeen_resource_hints', 10, 2 );
 
 /**
@@ -1012,6 +1013,5 @@ function debug() {
 }
 
 function paymentPost() {
-
 	return 90;
 }
